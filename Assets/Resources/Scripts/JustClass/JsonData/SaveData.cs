@@ -11,8 +11,11 @@ public class SaveData
     public int Day = 0;
     public int Hour = 0;
     public int Minute = 0;
+    public int curEnergy = 1;
+    public int maxEnergy = 70;
     public int[] CharacterFeelings = new int[SystemSetting.count_MainActors];
     public int[] PlayerStats = new int[SystemSetting.count_Stats];
+    public int Gold = 0;
     public int MapID = 0;
     public SaveData()
     {
@@ -21,7 +24,13 @@ public class SaveData
         Day = 0;
         Hour = 0;
         Minute = 0;
-    }
+        curEnergy = 1;
+        maxEnergy = 70;
+        CharacterFeelings = new int[SystemSetting.count_MainActors];
+        PlayerStats = new int[SystemSetting.count_Stats];
+        Gold = 0;
+        MapID = 0;
+}
     /// <summary>
     /// 
     /// </summary>

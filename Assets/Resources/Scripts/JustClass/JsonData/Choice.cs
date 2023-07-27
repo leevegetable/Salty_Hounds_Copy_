@@ -5,27 +5,25 @@ using UnityEngine;
 [System.Serializable]
 public class Choice
 {
-    public int ID;
+    [SerializeField]
     public string OptionDescription;
-    private int[] RewardCharacterFeeling = new int[5];
+    public int[] NeedCharacterFeeling = new int[5];
     [SerializeField]
-    private int[] RewardStat = new int[5];
-    [SerializeField]
-    private int RewardGold = 0;
-    public int NextDialogue;
+    public int[] NeedStat = new int[5];
+    public int NeedGold = 0;
+    public GameEvent gameEvent;
     public Choice() 
     {
-        ID = -1;
         OptionDescription = null;
-        NextDialogue = -1;
+        NeedCharacterFeeling = new int[5];
+        NeedStat = new int[5];
+        NeedGold = 0;
     }
-    public Choice(int id, string optionDescription, int[] characterFeeling, int[] rewardValue, int nextDialogue)
+    public Choice(string optionDescription)
     {
-        ID = id;
         OptionDescription = optionDescription;
-        RewardCharacterFeeling = characterFeeling;
-        RewardStat = rewardValue;
-        RewardGold = 0;
-        NextDialogue = nextDialogue;
+        NeedCharacterFeeling = new int[5];
+        NeedStat = new int[5];
+        NeedGold = 0;
     }
 }

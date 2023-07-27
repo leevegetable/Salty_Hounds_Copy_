@@ -8,7 +8,7 @@ public class UI_StackItem : MonoBehaviour
     private void OnEnable()
     {
         UIManager.instance.stackItems.Add(this);
-        PlayerManager.instanse.controller.isControl = false;
+        PlayerManager.instance.controller.isControl = false;
     }
     private void OnDisable()
     {

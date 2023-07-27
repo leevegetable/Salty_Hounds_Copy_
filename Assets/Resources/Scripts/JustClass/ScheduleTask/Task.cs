@@ -18,6 +18,7 @@ namespace Schedulerer.Task
         public Task(TaskSchedulerer timeline, int timeSchedulererID, int startTick, int endTick, HourSchedule work)
         {
             Timeline = timeline;
+            Debug.Log(timeSchedulererID);
             TimeSchedulererID = timeSchedulererID;
             StartTick = startTick;
             EndTick = endTick;
@@ -44,7 +45,12 @@ namespace Schedulerer.Task
         {
             if (StartTick <= tick && tick <= EndTick)
             {
-                if (tick > EndTick) returnDisablePool();
+                if (tick > EndTick)
+                {
+                    returnDisablePool();
+                    return;
+                }
+                Debug.Log("Work Update");
                 Work.update(TimeSchedulererID);
             }
             else

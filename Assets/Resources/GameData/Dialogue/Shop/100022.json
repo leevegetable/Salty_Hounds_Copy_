@@ -1,0 +1,15 @@
+{
+    "ID": 100022,
+    "SubPath": 0,
+    "Dialogues": [
+        {
+            "NpcID": 0,
+            "NpcFace": 0,
+            "EventCGID": -1,
+            "SelectOptionID": -1,
+            "Line": [
+                "고장이요...? 알겠습니다."
+            ]
+        }
+    ]
+}

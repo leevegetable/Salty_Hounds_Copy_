@@ -11,14 +11,15 @@ public class HourSchedule : ScriptableObject
     [Range(0,23)]public int EndHour;
     [Range(0,55)] public int EndMinute;
 
-    public GameEvent[] Events = new GameEvent[0];
+    public GameEvent gameEvent;
 
     public void update(int id)
     {
-        if (Events.Length == 0) return;
+        Debug.Log("Update");
+        if (gameEvent == null) return;
         else
         {
-
+            gameEvent.Update();
         }
     }
 }

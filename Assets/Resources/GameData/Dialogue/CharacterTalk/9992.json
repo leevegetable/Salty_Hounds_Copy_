@@ -1,0 +1,15 @@
+{
+    "ID": 9992,
+    "SubPath": 0,
+    "Dialogues": [
+        {
+            "NpcID": 0,
+            "NpcFace": 0,
+            "EventCGID": -1,
+            "SelectOptionID": -1,
+            "Line": [
+                "그래, 운동은 나중에 해도 돼."
+            ]
+        }
+    ]
+}

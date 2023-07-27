@@ -5,27 +5,41 @@ using UnityEngine;
 
 public class ChoiceManager : MonoBehaviour
 {
+    public static ChoiceManager instance;
     public GameObject Panel;
     public GameObject SelectOptionRoot;
     public GameObject OptionPrefab;
     public UI_ChoiceContent[] OptionObjects;
 
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     {
         init();
     }
-    public void setChoiceObjects(ChoicesData selectOptions)
+    public void setChoiceObjects(Choice[] selectOptions)
     {
-        for(int i = 0; i < selectOptions.Options.Length; i++)
+        for (int i = 0; i < selectOptions.Length; i++)
         {
             OptionObjects[i].gameObject.SetActive(true);
-            OptionObjects[i].init(selectOptions.Options[i]);
+            OptionObjects[i].init(selectOptions[i]);
+        }
+        Panel.SetActive(true);
+    }
+    public void setChoiceObjects(Choice[] selectOptions,GameEvent gameEvent, GameEventAction gameEventAction)
+    {
+        for (int i = 0; i < selectOptions.Length; i++)
+        {
+            OptionObjects[i].gameObject.SetActive(true);
+            OptionObjects[i].init(selectOptions[i], gameEvent, gameEventAction);
         }
         Panel.SetActive(true);
     }
     private void init()
     {
-        //Debug.Log(SystemSetting.capacity_Choices);
         OptionObjects = new UI_ChoiceContent[SystemSetting.capacity_Choices];
         for (int i = 0; i < SystemSetting.capacity_Choices; i++)
         {
@@ -33,5 +47,14 @@ public class ChoiceManager : MonoBehaviour
             OptionObjects[i] = temp.GetComponent<UI_ChoiceContent>();
             temp.SetActive(false);
         }
+    }
+    public void SelectEnd()
+    {
+        for (int i = 0; i < OptionObjects.Length; i++)
+        {
+            Debug.Log("SelectOption False");
+            OptionObjects[i].gameObject.SetActive(false);
+        }
+        Panel.SetActive(false);
     }
 }

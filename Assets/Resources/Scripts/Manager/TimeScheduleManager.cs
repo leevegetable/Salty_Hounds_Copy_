@@ -8,23 +8,23 @@ using Schedulerer.Task;
 
 public class TimeScheduleManager : MonoBehaviour
 {
+    public enum Type { global, map, character }
+
+    public Type type;
+
     private delegate void schedulerers(int tick);
 
     private schedulerers timeSchedulerers;
-
-    public List<DaySchedule[]> EveryWeekSchedule = new List<DaySchedule[]>();
-    public List<DaySchedule[]> DelayWeekSchedule = new List<DaySchedule[]>();
-    public List<DaySchedule[]> OneoffWeekSchedule = new List<DaySchedule[]>();
+    public List<int> ScheduleMasterID = new List<int>();
+    public Dictionary<int,DaySchedule[]> EveryWeekSchedule = new Dictionary<int, DaySchedule[]>();
+    public Dictionary<int,DaySchedule[]> DelayWeekSchedule = new Dictionary<int, DaySchedule[]>();
+    public Dictionary<int,DaySchedule[]> OneoffWeekSchedule = new Dictionary<int, DaySchedule[]>();
 
     public TaskSchedulerer TodaySchedule = new TaskSchedulerer();
 
-    private void Start()
-    {
-        
-    }
-
     public void AddSchedulerer(TimeSchedulerer schedulerer)
     {
+        Debug.Log("Added Schedulerer");
         timeSchedulerers += schedulerer.UpdateWeek;
     }
 
@@ -32,29 +32,60 @@ public class TimeScheduleManager : MonoBehaviour
     {
         ClearWeekSchedule();
         ClearTodayTask();
+        if (timeSchedulerers == null)
+        {
+            Debug.Log(gameObject);
+            return;
+        } 
         timeSchedulerers(week);
     }
 
     public void UpdateDay(int day)
     {
+        ClearTodayTask();
         updateDay(EveryWeekSchedule, TodaySchedule, day);
         updateDay(DelayWeekSchedule, TodaySchedule, day);
         updateDay(OneoffWeekSchedule, TodaySchedule, day);
     }
 
-    public void ExecuteTick(int tick)
+    public void UpdateDay(int day, int targetID)
     {
-        TodaySchedule.Execute(tick);
+        ClearTodayTask();
+        if (ScheduleMasterID.Contains(targetID))
+        {
+            int IDindex = ScheduleMasterID.IndexOf(targetID);
+            if(EveryWeekSchedule.ContainsKey(ScheduleMasterID[IDindex]) && EveryWeekSchedule[targetID][day] != null)
+                updateDay(EveryWeekSchedule[targetID][day], TodaySchedule, targetID);
+            if (DelayWeekSchedule.ContainsKey(ScheduleMasterID[IDindex]) && EveryWeekSchedule[targetID][day] != null)
+                updateDay(DelayWeekSchedule[targetID][day], TodaySchedule, targetID);
+            if (OneoffWeekSchedule.ContainsKey(ScheduleMasterID[IDindex]) && EveryWeekSchedule[targetID][day] != null)
+                updateDay(OneoffWeekSchedule[targetID][day], TodaySchedule, targetID);
+        }
+
     }
 
-    private void updateDay(List<DaySchedule[]> weekschedule, TaskSchedulerer taskSchedulerer, int day)
+    public void UpdateTick(int tick)
     {
-        for (int i = 0; i < weekschedule.Count; i++)
+        TodaySchedule.Update(tick);
+    }
+
+    private void updateDay(DaySchedule weekschedule, TaskSchedulerer taskSchedulerer, int mapCode)
+    {
+
+        if (weekschedule == null) return;
+        weekschedule.update(taskSchedulerer, mapCode);
+    }
+
+    private void updateDay(Dictionary<int,DaySchedule[]> weekschedule, TaskSchedulerer taskSchedulerer, int day)
+    {
+        for (int i = 0; i < ScheduleMasterID.Count; i++)
         {
-            if (weekschedule[i][day] == null) continue;
-            weekschedule[i][day].update(taskSchedulerer, i);
+            if (weekschedule.ContainsKey(ScheduleMasterID[i]) ||weekschedule[ScheduleMasterID[i]][day] == null) continue;
+            weekschedule[ScheduleMasterID[i]][day].update(taskSchedulerer, i);
         }
     }
+
+
 
     private void ClearWeekSchedule()
     {
@@ -68,14 +99,5 @@ public class TimeScheduleManager : MonoBehaviour
         TodaySchedule.Clear();
     }
 
-    public static int getTimeToTick(int hour, int sM)
-    {
-        return ((hour * 60) + sM) / 5;
-    }
-    public static int[] getTickToTime(int tick)
-    {
-        int hour = tick / 60;
-        int minute = tick - (hour * 60);
-        return new int[2] { hour, minute };
-    }
+
 }

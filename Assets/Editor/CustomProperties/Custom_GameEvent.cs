@@ -7,8 +7,10 @@ using UnityEditor.VersionControl;
 using JetBrains.Annotations;
 using System;
 using static Cinemachine.CinemachineBlendDefinition;
+using UnityEditor.TerrainTools;
+using Cinemachine.Editor;
 
-[CustomEditor(typeof(GameEvent))]
+[CustomEditor(typeof(GameEvent),true,isFallback = true)]
 [CanEditMultipleObjects]
 public class Custom_GameEvent : Editor
 {
@@ -30,7 +32,9 @@ public class Custom_GameEvent : Editor
     private SerializedProperty RewardGold;
     private SerializedProperty EventActions;
     private string[] Tags;
-    
+    private GameEventAction.actionType createType;
+    private GameEventAction.ifType IFType;
+    private GameEventAction.ifAction IFAction;
 
     private void OnEnable()
     {
@@ -44,14 +48,7 @@ public class Custom_GameEvent : Editor
         NeedStats = serializedObject.FindProperty("needStats");
         UsePlayerMapCode = serializedObject.FindProperty("usePlayerMapCode");
         NeedPlayerMapCode = serializedObject.FindProperty("needPlayerMapCode");
-        GiveCharacterFeelings = serializedObject.FindProperty("giveCharacterFeelings");
-        RewardCharacterFeelings = serializedObject.FindProperty("rewardCharacterFeelings");
-        GiveStats = serializedObject.FindProperty("giveStats");
-        RewardStats = serializedObject.FindProperty("rewardStats");
-        GiveGold = serializedObject.FindProperty("giveGold");
-        RewardGold = serializedObject.FindProperty("rewardGold");
         EventActions = serializedObject.FindProperty("EventActions");
-        EventActions = serializedObject.FindProperty(nameof(GameEvent.EventActions));
     }
 
     public override void OnInspectorGUI()
@@ -100,109 +97,104 @@ public class Custom_GameEvent : Editor
         EditorGUILayout.Space(2);
         EditorGUILayout.EndVertical();
 
-
-        EditorGUILayout.Space(4);
-        EditorGUILayout.BeginVertical(Style);
-        EditorGUILayout.Space(2);
-        EditorGUILayout.LabelField("이벤트 종료 후 리워드");
-        EditorGUI.indentLevel += 1;
-        GiveCharacterFeelings.boolValue = EditorGUILayout.ToggleLeft("GiveCharacterFeelings", GiveCharacterFeelings.boolValue);
-        if (GiveCharacterFeelings.boolValue)
-        {
-            EditorGUI.indentLevel += 1;
-            EditorGUILayout.PropertyField(RewardCharacterFeelings);
-            EditorGUILayout.Space(2);
-            EditorGUI.indentLevel -= 1;
-        }
-        GiveStats.boolValue = EditorGUILayout.ToggleLeft("GiveStats", GiveStats.boolValue);
-        if (GiveStats.boolValue)
-        {
-            EditorGUI.indentLevel += 1;
-            EditorGUILayout.PropertyField(RewardStats);
-            EditorGUILayout.Space(2);
-            EditorGUI.indentLevel -= 1;
-        }
-        GiveGold.boolValue = EditorGUILayout.ToggleLeft("GiveGold", GiveGold.boolValue);
-        if (GiveGold.boolValue)
-        {
-            EditorGUI.indentLevel += 1;
-            EditorGUILayout.PropertyField(RewardGold);
-            EditorGUILayout.Space(2);
-            EditorGUI.indentLevel -= 1;
-        }
-        EditorGUI.indentLevel -= 1;
-        EditorGUILayout.Space(2);
-        EditorGUILayout.EndVertical();
-
-
         EditorGUILayout.Space(8);
-        EditorGUILayout.BeginVertical(Style);
-        EditorGUILayout.Space(2);
+        //EditorGUILayout.BeginVertical(Style);
+        //EditorGUILayout.Space(2);
         EditorGUILayout.LabelField("이벤트 발동 내용");
-        EditorGUILayout.BeginVertical(GUI.skin.box);
-        EditorGUI.indentLevel += 1;
-        ShowEventActions();
-        for (int i = 0; i < EventActions.arraySize; i++)
-        {
-            EditorGUILayout.BeginVertical(Style);
-            EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("ActionType"));
-            EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("isFold").boolValue = 
-                EditorGUILayout.Foldout(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("isFold").boolValue,
-                "[Show Detail]", true);
-            if (EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("isFold").boolValue)
-            {
-                EditorGUI.indentLevel += 1;
-                switch ((EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("ActionType").enumValueIndex))
-                {
-                    case 0:
-                        EditorGUILayout.LabelField("Update Soon");
-                        break;
-                    case 1:
-                        EditorGUILayout.LabelField("h = Hour, m = Minute, Current Time + h:m");
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("h"));
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("m"));
-                        break;
-                    case 2:
-                        EditorGUILayout.LabelField("Spawn TargetID, Player Current Map");
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("targetID"));
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("spawnPos"));
-                        break;
-                    case 3:
-                        EditorGUILayout.LabelField("Delete TargetID, Player Current Map");
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("targetID"));
-                        break;
-                    case 4:
-                        EditorGUILayout.LabelField("Target Move,Target is Player Current Map Move StartPos to EndPos");
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("TargetType"));
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("startPosCurrent"));
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("startPos"));
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("endPos"));
-                        break;
-                    case 5:
-                        EditorGUILayout.LabelField("Player Change Map");
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("mapCode"));
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("mapPos"));
-                        break;
-                    case 6:
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("DialogueType"));
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("DialogueID"));
-                        break;
-                    case 7:
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("CallingType"));
-                        EditorGUILayout.PropertyField(EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("CallingID"));
-                        break;
+        
+        EditorGUILayout.BeginVertical(Style);
 
-                }
-                EditorGUI.indentLevel -= 1;
+        EditorGUILayout.BeginHorizontal();
+        createType = (GameEventAction.actionType)EditorGUILayout.EnumPopup(createType);
+        if (GUILayout.Button("Create Action"))
+        {
+            switch (createType)
+            {
+                case GameEventAction.actionType.PopupMessage:
+                    Custom.EventActions.Add(new Action_PopupMessage());
+                    break;
+                case GameEventAction.actionType.Waiting:
+                    Custom.EventActions.Add(new Action_Waiting());
+                    break;
+                case GameEventAction.actionType.SpawnCharacter:
+                    Custom.EventActions.Add(new Action_SpawnCharacter());
+                    break;
+                case GameEventAction.actionType.DeleteCharacter:
+                    Custom.EventActions.Add(new Action_DeleteCharacter());
+                    break;
+                case GameEventAction.actionType.Move:
+                    Custom.EventActions.Add(new Action_CharacterMove());
+                    break;
+                case GameEventAction.actionType.MapMove:
+                    Custom.EventActions.Add(new Action_MapMove());
+                    break;
+                case GameEventAction.actionType.Dialogue:
+                    Custom.EventActions.Add(new Action_Dialogue());
+                    break;
+                case GameEventAction.actionType.Calling:
+                    Custom.EventActions.Add(new Action_Calling());
+                    break;
+                case GameEventAction.actionType.Choices:
+                    Custom.EventActions.Add(new Action_Choices());
+                    break;
+                case GameEventAction.actionType.FadeOut:
+                    Custom.EventActions.Add(new Action_Fadeout());
+                    break;
+                case GameEventAction.actionType.GiveReward:
+                    Custom.EventActions.Add(new Action_GiveReward());
+                    break;
             }
 
-            EditorGUILayout.EndVertical();
+            serializedObject.Update();
         }
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        IFType = (GameEventAction.ifType)EditorGUILayout.EnumPopup(IFType);
+        if (IFType != GameEventAction.ifType.none && IFType != GameEventAction.ifType.EndIF && IFType != GameEventAction.ifType.Else)
+        {
+            IFAction = (GameEventAction.ifAction)EditorGUILayout.EnumPopup(IFAction);
+            if (IFAction != GameEventAction.ifAction.none )
+            {
+                if (GUILayout.Button("Create IF"))
+                {
+                    switch (IFAction)
+                    {
+                        case GameEventAction.ifAction.Time:
+                            Custom.EventActions.Add(new If_Time(IFType,IFAction));
+                            break;
+                    }
+                    if (IFType == GameEventAction.ifType.IF)
+                    {
+                        Custom.EventActions.Add(new EndIf_Action());
+                    }
+                    serializedObject.Update();
+                }
+            }
+        }
+        if (IFType == GameEventAction.ifType.Else)
+        {
+            if (GUILayout.Button("Create Else"))
+            {
+                Custom.EventActions.Add(new Else_Action(IFType));
+                serializedObject.Update();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+
+
+
+
+        EditorGUI.indentLevel += 1;
+        //for (int i = 0; i < EventActions.arraySize; i++)
+        //{
+        //    SerializedProperty action = serializedObject.FindProperty(EventActions.GetArrayElementAtIndex(i).propertyPath);
+        //    EditorGUILayout.PropertyField(action);
+
+        //}
+        EditorGUILayout.PropertyField(EventActions);
         EditorGUI.indentLevel -= 1;
         EditorGUILayout.EndVertical();
-        EditorGUILayout.Space(2);
-        EditorGUILayout.EndVertical();
-
         EditorGUILayout.Space(3);
         EditorGUILayout.EndVertical();
 
@@ -229,9 +221,40 @@ public class Custom_GameEvent : Editor
                     Tags[i] = TagList.GetArrayElementAtIndex(i).stringValue;
                 }
             }
+            List<SerializedProperty> ifactions = new List<SerializedProperty>();
+            Debug.Log(Custom.EventActions.Count);
+            for (int i = 0; i < Custom.EventActions.Count; i++)
+            {
+                if (EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("IFType").enumValueIndex == ((int)GameEventAction.ifType.IF))
+                {
+                    ifactions.Add(EventActions.GetArrayElementAtIndex(i));
+                    Debug.Log(ifactions.Count);
+                }
+                else if (EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("IFType").enumValueIndex == (int)GameEventAction.ifType.ElseIF)
+                {
+                    ifactions[ifactions.Count - 1].FindPropertyRelative("FalseIndex").intValue = i;
+                    ifactions.RemoveAt(ifactions.Count - 1);
+                    ifactions.Add(EventActions.GetArrayElementAtIndex(i));
+                }
+                else if (EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("IFType").enumValueIndex == (int)GameEventAction.ifType.Else)
+                {
+                    ifactions[ifactions.Count - 1].FindPropertyRelative("FalseIndex").intValue = i;
+                    ifactions.RemoveAt(ifactions.Count - 1);
+                }
+                else if (EventActions.GetArrayElementAtIndex(i).FindPropertyRelative("IFType").enumValueIndex == (int)GameEventAction.ifType.EndIF)
+                {
+                    ifactions[ifactions.Count - 1].FindPropertyRelative("FalseIndex").intValue = i;
+                    ifactions.RemoveAt(ifactions.Count - 1);
+                }
+                serializedObject.ApplyModifiedProperties();
+            }
+            ifactions.Clear();
+
+            EditorUtility.SetDirty(target);
             serializedObject.ApplyModifiedProperties();
             AssetDatabase.SetLabels(Custom, Tags);
         }
+
     }
 
 

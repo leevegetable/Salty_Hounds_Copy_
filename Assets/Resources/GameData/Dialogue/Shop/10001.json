@@ -1,0 +1,15 @@
+{
+    "ID": 10001,
+    "SubPath": 0,
+    "Dialogues": [
+        {
+            "NpcID": 0,
+            "NpcFace": 0,
+            "EventCGID": -1,
+            "SelectOptionID": -1,
+            "Line": [
+                "꽃집은 아침 10시부터 저녁 7시까지 영업한다."
+            ]
+        }
+    ]
+}

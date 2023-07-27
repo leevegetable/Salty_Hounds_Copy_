@@ -1,0 +1,15 @@
+{
+    "ID": 10002,
+    "SubPath": 0,
+    "Dialogues": [
+        {
+            "NpcID": 0,
+            "NpcFace": 0,
+            "EventCGID": -1,
+            "SelectOptionID": 10000,
+            "Line": [
+                "미안해요, 꽃이 고장나서 오늘은 판매할 수가 \n없어요."
+            ]
+        }
+    ]
+}

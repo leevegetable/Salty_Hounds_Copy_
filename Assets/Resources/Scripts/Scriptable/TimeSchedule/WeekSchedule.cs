@@ -15,7 +15,7 @@ public class WeekSchedule : ScriptableObject
     [Header("0부터 월화수목금토일")]
     public DaySchedule[] FixedDaySchedules = new DaySchedule[7];
 
-    public void update(TimeScheduleManager manager,int week)
+    public void update(TimeScheduleManager manager,int id,int week)
     {
         if (Week != week && !isDelayWeek(week))
         {
@@ -24,17 +24,24 @@ public class WeekSchedule : ScriptableObject
         } 
         if (EveryWeek)
         {
-            manager.EveryWeekSchedule.Add(FixedDaySchedules);
+            AddWeekSchedule(manager.EveryWeekSchedule, id);
         }
         else if (isDelayWeek(week))
         {
-            manager.DelayWeekSchedule.Add(FixedDaySchedules);
+            AddWeekSchedule(manager.DelayWeekSchedule, id);
         }
         else
         {
-            manager.OneoffWeekSchedule.Add(FixedDaySchedules);
+            AddWeekSchedule(manager.OneoffWeekSchedule, id);
         }
 
+    }
+    private void AddWeekSchedule(Dictionary<int, DaySchedule[]> WeekSchedule, int ID)
+    {
+        if (WeekSchedule.ContainsKey(ID))
+            WeekSchedule[ID] = FixedDaySchedules;
+        else
+            WeekSchedule.Add(ID, FixedDaySchedules);
     }
 
     private bool isDelayWeek(int week)

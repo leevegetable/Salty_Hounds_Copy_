@@ -5,21 +5,13 @@ using UnityEngine;
 [System.Serializable]
 public class DialogueData
 {
-    public int NpcFace;
-    public int EventCGID;
-    public int SelectOptionID;
-    public string[] Line;
-    public DialogueData()
+    public int ID;
+    public DialogueManager.DialoguePath SubPath;
+    public Dialog[] Dialogues;
+
+    public DialogueData(int id, Dialog[] dialogue)
     {
-        NpcFace = 0;
-        EventCGID = -1;
-        SelectOptionID = -1;
-}
-    public DialogueData(int face, int eventCGID, string[] line,  int selectOptionID)
-    {
-        NpcFace = face;
-        EventCGID = eventCGID;
-        Line = line;
-        SelectOptionID = selectOptionID;
+        ID = id;
+        Dialogues = dialogue;
     }
 }

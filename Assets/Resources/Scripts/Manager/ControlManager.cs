@@ -53,8 +53,7 @@ public class ControlManager : MonoBehaviour
                 dirX = 0;
             }
 
-            //여기 입력 속도가 너무 빠름
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
             {
                 getVerticalDir = 1;
             }

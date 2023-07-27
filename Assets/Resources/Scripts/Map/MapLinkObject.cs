@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class MapLinkObject : MonoBehaviour
 {
+    [HideInInspector]
     public MapData MyMap;
-    public enum Dir {vertical, left, right }
+    public int index;
+    public int[] MapCode;
+    public enum Dir {vertical, horizontal}
     public Dir MyDir;
     [SerializeField]
     private Vector2 playerSpawnPoint;
@@ -18,11 +21,15 @@ public class MapLinkObject : MonoBehaviour
     {
         interact = GetComponent<Interaction>();
         MyMap = transform.parent.GetComponent<MapData>();
+        for (int i = 0; i < MapCode.Length; i++)
+        {
+            if (MapCode[i] != -1)
+                MyMap.AddMapLinker(MapCode[i], index, this);
+        }
     }
 
     private void Start()
     {
-        MyMap.MapLinker[getMyDir()] = this;
         interact.Interactions += NextMap;
         if (MyDir == Dir.vertical)
         {
@@ -44,68 +51,34 @@ public class MapLinkObject : MonoBehaviour
                 {
                     if (interact.inputValue == 1)
                     {
-                        if (MyMap.LinkedMap[0] != -1)
+                        if (MapCode[0] != -1)
                         {
-                            nextmap(0, 1, target);
+                            nextmap(MapCode[0], 1, target);
                         }
                     }
                     else
                     {
-                        if (MyMap.LinkedMap[1] != -1)
+                        if (MapCode[1] != -1)
                         {
-                            nextmap(1, -1, target);
+                            nextmap(MapCode[1], -1, target);
                         }
                     }
                 }
                 break;
-            case Dir.left:
-                nextmap(2, 0, target);
+            case Dir.horizontal:
+                nextmap(MapCode[0], 0, target);
                 break;
-            case Dir.right:
-                nextmap(3, 0, target);
-                break;
-
         }
     }
 
-    private void nextmap(int id,int vertical, GameObject target)
+    private void nextmap(int targetMapCode,int vertical, GameObject target)
     {
-        if (MyMap.LinkedMap[id] != -1)
+        if (targetMapCode != -1)
         {
             if (target.CompareTag("Player"))
             {
-                PlayerManager.instanse.controller.Actions.MapMove(MyMap.LinkedMap[id], vertical, getNextDir());
+                PlayerManager.instance.controller.Actions.MapMove(MyMap.MapCode ,targetMapCode, index, vertical);
             }
-        }
-    }
-
-    private int getMyDir()
-    {
-        switch (MyDir)
-        {
-            case Dir.vertical:
-                return 0;
-            case Dir.left:
-                return 1;
-            case Dir.right:
-                return 2;
-            default:
-                return -1;
-        }
-    }
-
-    private int getNextDir()
-    {
-        switch (MyDir)
-        {
-            case Dir.vertical:
-                return 0;
-            case Dir.left: 
-                return 2;
-            case Dir.right:
-                return 1;
-            default:
-                return -1;
         }
     }
 

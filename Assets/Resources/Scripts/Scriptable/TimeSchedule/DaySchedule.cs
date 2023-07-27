@@ -10,11 +10,12 @@ public class DaySchedule : ScriptableObject
 
     public void update(TaskSchedulerer schedulerer, int id)
     {
+        Debug.Log("UpdateDay");
         for (int i = 0; i < hourSchedules.Length; i++)
         {
             if (hourSchedules[i] == null) continue;
-            int startTick = TimeScheduleManager.getTimeToTick(hourSchedules[i].StartHour, hourSchedules[i].StartMinute);
-            int endTick = TimeScheduleManager.getTimeToTick(hourSchedules[i].EndHour, hourSchedules[i].EndMinute);
+            int startTick = TickbasePlaySystem.getTimeToTick(hourSchedules[i].StartHour, hourSchedules[i].StartMinute);
+            int endTick = TickbasePlaySystem.getTimeToTick(hourSchedules[i].EndHour, hourSchedules[i].EndMinute);
             schedulerer.Add(id, startTick, endTick, hourSchedules[i]);
         }
     }
