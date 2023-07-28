@@ -27,7 +27,9 @@ public class GameEvent : ScriptableObject
     [SerializeField] private bool usePreEvents;
     [SerializeField] private int[] needPreGlobalEvents = new int[0];
 
+#if UNITY_EDITOR
     [ArrayElementTitle("Title")]
+#endif
     [SerializeField][SerializeReference] public List<GameEventAction> EventActions = new List<GameEventAction>();
 
     public void Update()

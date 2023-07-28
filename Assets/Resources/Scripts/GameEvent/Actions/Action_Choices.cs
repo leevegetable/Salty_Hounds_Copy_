@@ -5,7 +5,9 @@ using UnityEngine;
 [System.Serializable]
 public class Action_Choices : GameEventAction
 {
+#if UNITY_EDITOR
     [ArrayElementTitle("OptionDescription")]
+#endif
     [SerializeField]
     public Choice[] Choices = new Choice[0];
 
