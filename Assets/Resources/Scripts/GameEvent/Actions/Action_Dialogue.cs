@@ -22,7 +22,6 @@ public class Action_Dialogue : GameEventAction
         UI_RuntimeLog.instance.CallLog("Enter Action Coroutine");
         DialogueManager.Instance.CallDialogueData(gameEvent, this, DialogueType, DialogueID);
         yield return new WaitUntil(() => actionEnd);
-        gameEvent.isGameEventEnd();
     }
 
 }

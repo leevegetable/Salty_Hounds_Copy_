@@ -17,7 +17,6 @@ public class Action_MapMove : GameEventAction
     public override IEnumerator Execute(GameEvent gameEvent)
     {
         setPlayerControl();
-        gameEvent.isGameEventEnd();
         yield break;
     }
 }

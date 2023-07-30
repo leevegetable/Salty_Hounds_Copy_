@@ -15,7 +15,6 @@ public class Action_DeleteCharacter : GameEventAction
     public override IEnumerator Execute(GameEvent gameEvent)
     {
         setPlayerControl();
-        gameEvent.isGameEventEnd();
         throw new System.NotImplementedException();
     }
 }

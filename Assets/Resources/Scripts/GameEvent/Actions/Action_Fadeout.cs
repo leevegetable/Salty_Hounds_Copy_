@@ -20,7 +20,6 @@ public class Action_Fadeout : GameEventAction
             Debug.Log(UIManager.instance.fade.animController.animator.GetCurrentAnimatorClipInfo(0).ToString());
             yield return null;
         }
-        PlayerManager.instance.controller.isControl = true;
         actionEnd = true;
         UIManager.instance.unCallFade();
         yield break;

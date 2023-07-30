@@ -27,7 +27,6 @@ public class Action_Calling:GameEventAction
             Debug.Log("Pop! Calling");
             actionEnd = true;
         }
-        gameEvent.isGameEventEnd();
         Debug.Log("End Action_Calling");
         yield break;
     }

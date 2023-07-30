@@ -21,7 +21,6 @@ public class Action_CharacterMove : GameEventAction
     public override IEnumerator Execute(GameEvent gameEvent)
     {
         setPlayerControl();
-        gameEvent.isGameEventEnd();
         yield break;
     }
 }

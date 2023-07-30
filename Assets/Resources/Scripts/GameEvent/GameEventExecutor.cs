@@ -94,34 +94,37 @@ public class GameEventExecutor : MonoBehaviour
             if (!playingList.Contains(currentAction))
             {
                 StartCoroutine(currentAction.Execute(gameEvent));
+                Debug.Log(currentAction.Title + " Execute");
                 playingList.Add(gameEvent.EventActions[index]);
             }
             if (currentAction.actionEnd || currentAction.isOverapNextAction)
             {
+                Debug.Log(currentAction.Title + " " + gameEvent.EventActions.Count + " " + playingList.Count);
                 if (playingList.Count < gameEvent.EventActions.Count)
                 {
                     index++;
                     currentAction = gameEvent.EventActions[index];
+                    Debug.Log(currentAction.Title);
                 }
             }
             if (gameEvent.EventActions.IndexOf(currentAction) + 1 >= gameEvent.EventActions.Count)
             {
-                break;
+                if (playingList.Count != 0)
+                {
+                    for (int i = 0; i < playingList.Count; i++)
+                    {
+                        yield return null;
+                        if (!playingList[i].actionEnd)
+                        {
+                            i = 0;
+                        }
+                    }
+                }
             }
             yield return null;
         }
 
-        if (playingList.Count != 0)
-        {
-            for (int i = 0; i < playingList.Count; i++)
-            {
-                yield return null;
-                if (!playingList[i].actionEnd)
-                {
-                    i = 0;
-                }
-            }
-        }
+        Debug.Log("isEnd");
         playingList.Clear();
         gameEvent.initializeGameEvents();
         gameEvent.isGameEventEnd();
